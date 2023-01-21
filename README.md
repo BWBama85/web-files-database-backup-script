@@ -10,6 +10,18 @@ Using crontab -e you can run the script at any interval you like. An example is 
 
 `0 12,18 * * * /bin/bash /home/backup-data/backup.sh > /dev/null 2>&1`
 
+## Rotating the logs
+
+Use logrotate to rotate the logs. The example below rotates the log once it reaches 100k and keeps 8 days worth of logs.
+
+`    /home/backup-data/log.log {
+        size 100k
+        rotate 8
+        compress
+        copytruncate
+        missingok
+    }`
+
 ## Notes
 
 - It assumes that you have a /root/.my.cnf file with credentials stored in it.
