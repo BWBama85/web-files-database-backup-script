@@ -62,7 +62,6 @@ if [ $percent_free -lt 15 ]; then
 fi
 
 # Send a message with a summary of the backup
-BACKUP_SUMMARY=$(find "$BACKUP_DIR" -type f -name "*.gz" -or -name "*.sql.gz" | xargs du -h | awk 'BEGIN {total=0} {total+=$1} END {print total}')
-BACKUP_FILES=$(find "$BACKUP_DIR" -type f -name "*.gz" -or -name "*.sql.gz")
+BACKUP_SUMMARY=$(find "$BACKUP_DIR" -type f -name "*-$TIMESTAMP*" -exec du -h {} + | awk '{ total += $1 } END { print total }')
 MESSAGE=$(echo -n '{"content":"Backup for '$SERVER' completed. \nTotal size of backup: '$BACKUP_SUMMARY'MB"}' | jq -c)
 curl -H "Content-Type: application/json" -X POST -d "$MESSAGE" $WEBHOOK_URL
