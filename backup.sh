@@ -55,13 +55,18 @@ find "$BACKUP_DIR" -mtime +8 -type f -delete
 total_space=$(df /home/backup-data | awk 'NR==2 {print $2}')
 free_space=$(df /home/backup-data | awk 'NR==2 {print $4}')
 percent_free=$((free_space * 100 / total_space))
+
 # Check if the percentage of free space is less than 15
 if [ $percent_free -lt 15 ]; then
     echo "Low disk space on backup server, sending alert..." | tee -a $LOG_FILE
-    curl -H "Content-Type: application/json" -X POST -d "{\"content\":\"Low disk space on backup server. Please free up some space.\"}" $WEBHOOK_URL
+    if [ -n "$WEBHOOK_URL" ]; then
+        curl -H "Content-Type: application/json" -X POST -d "{\"content\":\"Low disk space on backup server. Please free up some space.\"}" $WEBHOOK_URL
+    fi
 fi
 
 # Send a message with a summary of the backup
 BACKUP_SUMMARY=$(find "$BACKUP_DIR" -type f -name "*-$TIMESTAMP*" -exec du -h {} + | awk '{ total += $1 } END { print total }')
 MESSAGE=$(echo -n '{"content":"Backup for '$SERVER' completed. \nTotal size of backup: '$BACKUP_SUMMARY'MB"}' | jq -c)
-curl -H "Content-Type: application/json" -X POST -d "$MESSAGE" $WEBHOOK_URL
+if [ -n "$WEBHOOK_URL" ]; then
+    curl -H "Content-Type: application/json" -X POST -d "$MESSAGE" $WEBHOOK_URL
+fi
