@@ -48,7 +48,7 @@ done
 
 # Rotate the backups, keeping only the last 8 days of backups
 echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - Rotating backups, keeping only the last 8 days of backups..." | tee -a $LOG_FILE
-find "$BACKUP_DIR" -mtime +8 -type f -delete
+find "$BACKUP_DIR" -mtime +8 -type f -name "*.gz" -delete
 
 # Check to see if we are running out of disk space
 total_space=$(df /home/backup-data | awk 'NR==2 {print $2}')
