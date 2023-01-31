@@ -12,7 +12,7 @@ Using crontab -e you can run the script at any interval you like. An example is 
 
 ## Rotating the logs
 
-Use logrotate to rotate the logs. The example below rotates the log once it reaches 100k and keeps 8 days worth of logs.
+Use logrotate to rotate the logs. The example below rotates the log once it reaches 100kb and keeps 8 days worth of logs.
 
     /home/backup-data/log.log {
         size 100k
