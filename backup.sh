@@ -1,12 +1,7 @@
 #!/bin/bash
 
 # Set up variables
-BACKUP_DIR="/home/backup-data"
-DATA_DIR="/home/nginx/domains"
-MYSQLDUMP_OPTIONS="--single-transaction --skip-lock-tables --default-character-set=utf8mb4"
-LOG_FILE="/home/backup-data/log.log"
-WEBHOOK_URL=""
-SERVER=$(uname -n)
+. config.inc
 
 # Create the backup directory if it doesn't already exist
 if [ ! -d "$BACKUP_DIR" ]; then
@@ -21,7 +16,7 @@ for dir in $(find "$DATA_DIR" -maxdepth 1 -type d); do
     if [ "$dir" != "$DATA_DIR" ]; then
         echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - Creating backup for $dir..." | tee -a $LOG_FILE
         cd "$dir"
-        tar -zcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude=logs *
+        tar -zcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude=$FILE_EXCLUDES *
         if [ $? -ne 0 ]; then
             # There was an error creating the backup
             echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - Error creating backup for $dir" | tee -a $LOG_FILE
