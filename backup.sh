@@ -8,6 +8,10 @@ if [ ! -d "$BACKUP_DIR" ]; then
     mkdir -p "$BACKUP_DIR"
 fi
 
+if [ $DEBUG == "y" ]; then
+    VERBOSE="v"
+fi
+
 # Create a timestamp for the backup
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 
@@ -16,7 +20,7 @@ for dir in $(find "$DATA_DIR" -maxdepth 1 -type d); do
     if [ "$dir" != "$DATA_DIR" ]; then
         echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - Creating backup for $dir..." | tee -a $LOG_FILE
         cd "$dir"
-        tar -zcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
+        tar -zcf$VERBOSE "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
         if [ $? -ne 0 ]; then
             # There was an error creating the backup
             echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - Error creating backup for $dir" | tee -a $LOG_FILE

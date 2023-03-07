@@ -1,7 +1,10 @@
 BACKUP_DIR="/home/backup-data"
+SCRIPT_LOCATION="/home/backup-data/script/"
 DATA_DIR="/home/nginx/domains"
 MYSQLDUMP_OPTIONS="--single-transaction --skip-lock-tables --default-character-set=utf8mb4"
 LOG_FILE="/home/backup-data/log.log"
 WEBHOOK_URL=""
 SERVER=$(uname -n)
-EXCLUDE_FILES="exclude_files.inc"
+EXCLUDE_FILES="/home/backup-data/scripts/exclude_files.inc"
+## Debug
+DEBUG="n"
