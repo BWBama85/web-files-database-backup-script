@@ -4,4 +4,4 @@ MYSQLDUMP_OPTIONS="--single-transaction --skip-lock-tables --default-character-s
 LOG_FILE="/home/backup-data/log.log"
 WEBHOOK_URL=""
 SERVER=$(uname -n)
-FILE_EXCLUDES="logs"
+EXCLUDE_FILES="exclude_files.inc"
