@@ -20,7 +20,12 @@ for dir in $(find "$DATA_DIR" -maxdepth 1 -type d); do
     if [ "$dir" != "$DATA_DIR" ]; then
         echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - Creating backup for $dir..." | tee -a $LOG_FILE
         cd "$dir"
-        tar zcf$VERBOSE "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
+        if [ $DEBUG == "n" ]; then
+            tar zcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
+        fi
+        if [ $DEBUG == "y" ]; then
+            tar vzcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
+        fi
         if [ $? -ne 0 ]; then
             # There was an error creating the backup
             echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - Error creating backup for $dir" | tee -a $LOG_FILE
