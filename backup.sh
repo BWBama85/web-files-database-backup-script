@@ -19,12 +19,16 @@ TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 for dir in $(find "$DATA_DIR" -maxdepth 1 -type d); do
     if [ "$dir" != "$DATA_DIR" ]; then
         echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - Creating backup for $dir..." | tee -a $LOG_FILE
+        echo "Status code: $?" | tee -a $LOG_FILE
         cd "$dir"
+        echo "Status code: $?" | tee -a $LOG_FILE
         if [ $DEBUG == "n" ]; then
             tar zcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
+            echo "Status code: $?" | tee -a $LOG_FILE
         fi
         if [ $DEBUG == "y" ]; then
             tar vzcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
+            echo "Status code: $?" | tee -a $LOG_FILE
         fi
         if [ $? -ne 0 ]; then
             # There was an error creating the backup
