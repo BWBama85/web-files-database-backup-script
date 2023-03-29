@@ -5,6 +5,6 @@ MYSQLDUMP_OPTIONS="--single-transaction --skip-lock-tables --default-character-s
 LOG_FILE="/home/backup-data/log.log"
 WEBHOOK_URL=""
 SERVER=$(uname -n)
-EXCLUDE_FILES="/home/backup-data/scripts/exclude_files.inc"
+EXCLUDE_FILES="$SCRIPT_LOCATION/exclude_files.inc"
 ## Debug
 DEBUG="n"
