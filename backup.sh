@@ -1,10 +1,9 @@
 #!/bin/bash
+# Set up variables
+. config.inc
 exec 3>&1 4>&2
 trap 'exec 2>&4 1>&3' 0 1 2 3 RETURN
 exec 1>>$LOG_FILE 2>&1
-
-# Set up variables
-. config.inc
 
 log() {
     echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - $1"
