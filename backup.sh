@@ -1,10 +1,13 @@
 #!/bin/bash
+exec 3>&1 4>&2
+trap 'exec 2>&4 1>&3' 0 1 2 3 RETURN
+exec 1>>$LOG_FILE 2>&1
 
 # Set up variables
 . config.inc
 
 log() {
-    echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - $1" | tee -a $LOG_FILE
+    echo "[$(date +%Y-%m-%d\ %H:%M:%S)] - $1"
 }
 
 # Create the backup directory if it doesn't already exist
@@ -23,17 +26,8 @@ TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 for dir in $(find "$DATA_DIR" -maxdepth 1 -type d); do
     if [ "$dir" != "$DATA_DIR" ]; then
         log "Creating backup for $dir"
-        log "Status code: $?"
         cd "$dir"
-        log "cd status code: $?"
-        if [ $DEBUG == "n" ]; then
-            tar zcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
-            log "tar non-debug status code: $?"
-        fi
-        if [ $DEBUG == "y" ]; then
-            tar vzcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
-            log "tar debug status code: $?"
-        fi
+        tar zcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
         if [ $? -ne 0 ]; then
             # There was an error creating the backup
             log "Error creating backup for $dir"
