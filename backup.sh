@@ -14,29 +14,27 @@ if [ ! -d "$BACKUP_DIR" ]; then
     mkdir -p "$BACKUP_DIR"
 fi
 
-if [ $DEBUG == "y" ]; then
-    VERBOSE="v"
-fi
-
 # Create a timestamp for the backup
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 
 # Create a tar.gz archive for each subdirectory in the data directory, excluding logs
-for dir in $(find "$DATA_DIR" -maxdepth 1 -type d); do
-    if [ "$dir" != "$DATA_DIR" ]; then
-        log "Creating backup for $dir"
-        cd "$dir"
-        tar zcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
-        if [ $? -ne 0 ]; then
-            # There was an error creating the backup
-            log "Error creating backup for $dir"
-            exit 1
-        else
-            log "Backup for $dir created successfully"
+if [ $FILE_BACKUP == "y" ]; then
+    for dir in $(find "$DATA_DIR" -maxdepth 1 -type d); do
+        if [ "$dir" != "$DATA_DIR" ]; then
+            log "Creating backup for $dir"
+            cd "$dir"
+            tar zcf "$BACKUP_DIR/${dir##*/}-$TIMESTAMP.tar.gz" --exclude-from="$EXCLUDE_FILES" *
+            if [ $? -ne 0 ]; then
+                # There was an error creating the backup
+                log "Error creating backup for $dir"
+                exit 1
+            else
+                log "Backup for $dir created successfully"
+            fi
+            cd - >/dev/null 2>&1
         fi
-        cd - >/dev/null 2>&1
-    fi
-done
+    done
+fi
 
 # Use mysqldump to backup each MySQL database
 for db in $(mysql -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema|mysql|sys|test)"); do
